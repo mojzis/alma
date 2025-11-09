@@ -2,6 +2,9 @@
     {% for note in notes %}
         {% include "partials/note-item.html" %}
     {% endfor %}
+    {% if has_more %}
+        {% include "partials/load-more.html" %}
+    {% endif %}
 {% else %}
     <div class="empty-state">
         <p>No notes found.</p>

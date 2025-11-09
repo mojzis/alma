@@ -12,13 +12,16 @@
         </button>
     </div>
 
-    <ul class="project-list">
+    <ul class="project-list" role="navigation" aria-label="Projects navigation">
     <!-- All Notes (Special Item) -->
     <li class="project-item active"
         hx-get="/notes?filter=all"
         hx-target="#notes-list"
-        hx-swap="innerHTML">
-        <div class="project-dot default"></div>
+        hx-swap="innerHTML"
+        role="button"
+        tabindex="0"
+        aria-label="View all notes">
+        <div class="project-dot default" aria-hidden="true"></div>
         <span class="project-name">All Notes</span>
         <span class="project-count">{{ total_count|default(0) }}</span>
     </li>
@@ -31,8 +34,11 @@
         hx-swap="innerHTML"
         x-data="{ showActions: false }"
         @mouseenter="showActions = true"
-        @mouseleave="showActions = false">
-        <div class="project-dot {{ project.color }}"></div>
+        @mouseleave="showActions = false"
+        role="button"
+        tabindex="0"
+        aria-label="View {{ project.name }} project notes">
+        <div class="project-dot {{ project.color }}" aria-hidden="true"></div>
         <span class="project-name">{{ project.name }}</span>
         <span class="project-count">{{ project.note_count|default(0) }}</span>
 

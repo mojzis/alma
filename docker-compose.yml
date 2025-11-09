@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  alma:
+    build: .
+    container_name: alma-notes
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-http://localhost:8000/auth/callback}
+      - DEBUG=${DEBUG:-False}
+    volumes:
+      # Mount data directories for persistence
+      - ./notes:/app/notes
+      - ./.indexes:/app/.indexes
+      # Optional: mount .env file
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/login')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
