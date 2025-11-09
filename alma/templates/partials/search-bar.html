@@ -1,0 +1,19 @@
+<div style="margin-bottom: 20px;">
+    <label for="search" style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Search Notes</label>
+    <input
+        type="search"
+        id="search"
+        name="q"
+        placeholder="Search by title..."
+        hx-get="/search"
+        hx-trigger="keyup changed delay:300ms"
+        hx-target="#notes-list"
+        hx-swap="innerHTML"
+        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;"
+        x-data="{ value: '' }"
+        x-model="value"
+    >
+    <p x-show="value.length > 0" style="font-size: 12px; color: #666; margin-top: 4px;">
+        Searching... (debounced 300ms)
+    </p>
+</div>

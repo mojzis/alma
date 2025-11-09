@@ -21,7 +21,18 @@
     <!-- Right column: Notes list -->
     <div>
         <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <h2>📚 Recent Notes</h2>
+            <h2>📚 Notes</h2>
+
+            <!-- Search -->
+            {% include "partials/search-bar.html" %}
+
+            <!-- Project Filter -->
+            {% include "partials/project-filter.html" %}
+
+            <!-- Tag Cloud -->
+            {% include "partials/tag-cloud.html" %}
+
+            <!-- Notes List -->
             <div id="notes-list" style="margin-top: 20px;">
                 {% if notes %}
                     {% for note in notes %}

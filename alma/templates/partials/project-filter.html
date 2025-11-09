@@ -1,0 +1,33 @@
+<div style="margin-bottom: 20px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Filter by Project</label>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button
+            hx-get="/notes?filter=all"
+            hx-target="#notes-list"
+            hx-swap="innerHTML"
+            class="secondary"
+            style="font-size: 13px;"
+        >All</button>
+        <button
+            hx-get="/notes?project=personal"
+            hx-target="#notes-list"
+            hx-swap="innerHTML"
+            class="secondary"
+            style="font-size: 13px;"
+        >Personal</button>
+        <button
+            hx-get="/notes?project=work"
+            hx-target="#notes-list"
+            hx-swap="innerHTML"
+            class="secondary"
+            style="font-size: 13px;"
+        >Work</button>
+        <button
+            hx-get="/notes?project=reference"
+            hx-target="#notes-list"
+            hx-swap="innerHTML"
+            class="secondary"
+            style="font-size: 13px;"
+        >Reference</button>
+    </div>
+</div>
