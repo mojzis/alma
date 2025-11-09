@@ -1,0 +1,38 @@
+<div class="note" id="note-{{ note.id }}">
+    <form
+        hx-put="/notes/{{ note.id }}"
+        hx-target="#note-{{ note.id }}"
+        hx-swap="outerHTML"
+    >
+        <div class="form-group">
+            <label for="tags-{{ note.id }}">Tags (comma-separated)</label>
+            <input
+                type="text"
+                name="tags"
+                id="tags-{{ note.id }}"
+                value="{{ note.tags|join(', ') }}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="content-{{ note.id }}">Content</label>
+            <textarea
+                name="content"
+                id="content-{{ note.id }}"
+                rows="6"
+                required
+            >{{ note.content }}</textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <button type="submit">Save</button>
+            <button
+                type="button"
+                hx-get="/notes/{{ note.id }}"
+                hx-target="#note-{{ note.id }}"
+                hx-swap="outerHTML"
+                class="secondary"
+            >Cancel</button>
+        </div>
+    </form>
+</div>

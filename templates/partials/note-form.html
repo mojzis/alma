@@ -1,0 +1,54 @@
+<form
+    hx-post="/notes"
+    hx-target="#notes-list"
+    hx-swap="afterbegin"
+    hx-on::after-request="if(event.detail.successful) this.reset()"
+    x-data="{ content: '', valid: false }"
+    x-init="$watch('content', val => valid = val.trim().length > 0)"
+>
+    <div class="form-group">
+        <label for="project">Project</label>
+        <select name="project" id="project" required>
+            <option value="personal">Personal</option>
+            <option value="work">Work</option>
+            <option value="reference">Reference</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="content_type">Type</label>
+        <select name="content_type" id="content_type" required>
+            <option value="note">Note</option>
+            <option value="idea">Idea</option>
+            <option value="task">Task</option>
+            <option value="reference">Reference</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="tags">Tags (comma-separated)</label>
+        <input
+            type="text"
+            name="tags"
+            id="tags"
+            placeholder="python, fastapi, notes"
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="content">Content *</label>
+        <textarea
+            name="content"
+            id="content"
+            rows="6"
+            required
+            x-model="content"
+            placeholder="Write your note here..."
+        ></textarea>
+    </div>
+
+    <button type="submit" :disabled="!valid">
+        <span class="htmx-indicator">Saving...</span>
+        <span>Add Note</span>
+    </button>
+</form>

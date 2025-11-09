@@ -2,9 +2,10 @@
 
 import os
 from pathlib import Path
+from typing import Annotated
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, Response, Depends
+from fastapi import FastAPI, Request, Response, Depends, Form, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -16,6 +17,7 @@ from auth import (
     create_session_cookie,
     require_auth,
 )
+import notes
 
 # Load environment variables
 load_dotenv()
@@ -39,9 +41,10 @@ Path(".indexes").mkdir(exist_ok=True)
 @app.get("/")
 async def index(request: Request, user: str = Depends(require_auth)):
     """Main app page - requires authentication."""
+    notes_list = notes.list_notes(limit=20)
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "user": user, "notes": []}
+        {"request": request, "user": user, "notes": notes_list}
     )
 
 
@@ -103,6 +106,87 @@ async def logout(response: Response):
     response = RedirectResponse("/login")
     response.delete_cookie("session")
     return response
+
+
+# ============================================================================
+# Notes CRUD Endpoints
+# ============================================================================
+
+@app.post("/notes")
+async def create_note(
+    request: Request,
+    project: Annotated[str, Form()],
+    content_type: Annotated[str, Form()],
+    tags: Annotated[str, Form()],
+    content: Annotated[str, Form()],
+    user: str = Depends(require_auth)
+):
+    """Create new note, return HTML fragment."""
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    note = notes.create_note(content, project, content_type, tag_list, user)
+    return templates.TemplateResponse(
+        "partials/note-item.html",
+        {"request": request, "note": note}
+    )
+
+
+@app.get("/notes/{note_id}")
+async def get_note(
+    request: Request,
+    note_id: str,
+    user: str = Depends(require_auth)
+):
+    """Get single note, return HTML fragment."""
+    note = notes.get_note(note_id)
+    if not note:
+        raise HTTPException(404, "Note not found")
+    return templates.TemplateResponse(
+        "partials/note-item.html",
+        {"request": request, "note": note}
+    )
+
+
+@app.get("/notes/{note_id}/edit")
+async def edit_note_form(
+    request: Request,
+    note_id: str,
+    user: str = Depends(require_auth)
+):
+    """Get edit form, return HTML fragment."""
+    note = notes.get_note(note_id)
+    if not note:
+        raise HTTPException(404, "Note not found")
+    return templates.TemplateResponse(
+        "partials/note-edit.html",
+        {"request": request, "note": note}
+    )
+
+
+@app.put("/notes/{note_id}")
+async def update_note(
+    request: Request,
+    note_id: str,
+    tags: Annotated[str, Form()],
+    content: Annotated[str, Form()],
+    user: str = Depends(require_auth)
+):
+    """Update note, return HTML fragment."""
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    note = notes.update_note(note_id, content, tag_list)
+    return templates.TemplateResponse(
+        "partials/note-item.html",
+        {"request": request, "note": note}
+    )
+
+
+@app.delete("/notes/{note_id}")
+async def delete_note(
+    note_id: str,
+    user: str = Depends(require_auth)
+):
+    """Delete note, return empty response."""
+    notes.delete_note(note_id)
+    return ""
 
 
 if __name__ == "__main__":
