@@ -1,0 +1,10 @@
+<div
+    hx-get="/notes?offset={{ offset }}&limit=20"
+    hx-trigger="revealed"
+    hx-swap="afterend"
+    class="load-more"
+    style="padding: 20px; text-align: center; color: var(--text-tertiary, #6b7280); font-size: 13px;"
+>
+    <span class="htmx-indicator">Loading more notes...</span>
+    <span>Scroll to load more</span>
+</div>

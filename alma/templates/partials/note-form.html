@@ -21,12 +21,13 @@
         hx-target="#notes-list"
         hx-swap="afterbegin"
         hx-on::after-request="if(event.detail.successful) { this.reset(); content = ''; expanded = false; wordCount = 0; }"
+        aria-label="Create new note"
     >
         <!-- Metadata Row (Inline) -->
         <div style="display: grid; grid-template-columns: 140px 120px 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
             <!-- Project Dropdown -->
             <div>
-                <select name="project" required style="padding: 8px 12px; font-size: 13px;">
+                <select name="project" required style="padding: 8px 12px; font-size: 13px;" aria-label="Select project">
                     {% for project in projects_list %}
                     <option value="{{ project.id }}">{{ project.name }}</option>
                     {% endfor %}
@@ -35,7 +36,7 @@
 
             <!-- Type Dropdown -->
             <div>
-                <select name="content_type" required style="padding: 8px 12px; font-size: 13px;">
+                <select name="content_type" required style="padding: 8px 12px; font-size: 13px;" aria-label="Select note type">
                     <option value="note">Note</option>
                     <option value="idea">Idea</option>
                     <option value="task">Task</option>
@@ -50,6 +51,7 @@
                     name="tags"
                     placeholder="Add tags..."
                     style="padding: 8px 12px; font-size: 13px;"
+                    aria-label="Add tags (comma-separated)"
                 >
             </div>
         </div>
@@ -64,6 +66,8 @@
                 placeholder="Start writing..."
                 :style="expanded ? 'height: 520px;' : 'height: 300px;'"
                 style="transition: height var(--transition-slow); font-size: 14px;"
+                aria-label="Note content"
+                aria-describedby="formatting-hints"
             ></textarea>
             <div style="text-align: right; margin-top: var(--spacing-sm);">
                 <span class="text-sm" x-text="`${wordCount} words`"></span>
@@ -71,7 +75,7 @@
         </div>
 
         <!-- Formatting Hints -->
-        <div class="text-sm" style="color: var(--text-tertiary); margin-bottom: var(--spacing-md);">
+        <div id="formatting-hints" class="text-sm" style="color: var(--text-tertiary); margin-bottom: var(--spacing-md);">
             Markdown supported: <code>**bold**</code> <code>*italic*</code> <code>[[wiki-link]]</code> <code>#tag</code>
         </div>
 

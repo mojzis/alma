@@ -228,6 +228,8 @@ async def filter_notes(
     project: str | None = None,
     tag: str | None = None,
     filter: str | None = None,
+    offset: int = 0,
+    limit: int = 20,
     user: str = Depends(require_auth)
 ):
     """Filter notes by project or tag, return HTML fragment."""
@@ -235,30 +237,33 @@ async def filter_notes(
 
     if filter == "all":
         # Show all notes
-        metadata = indexes.get_all_metadata(limit=50)
-        note_ids = [m["id"] for m in metadata]
+        metadata = indexes.get_all_metadata(limit=limit+offset+10)
+        note_ids = [m["id"] for m in metadata[offset:offset+limit]]
         notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
     elif project:
         # Filter by project
         note_ids = indexes.get_notes_by_project(project)
-        notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+        notes_list = [notes.get_note(nid) for nid in note_ids[offset:offset+limit] if notes.get_note(nid)]
         # Sort by created date
         notes_list.sort(key=lambda n: n.get("created", ""), reverse=True)
     elif tag:
         # Filter by tag
         note_ids = indexes.get_notes_by_tag(tag)
-        notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+        notes_list = [notes.get_note(nid) for nid in note_ids[offset:offset+limit] if notes.get_note(nid)]
         # Sort by created date
         notes_list.sort(key=lambda n: n.get("created", ""), reverse=True)
     else:
         # Default: show all
-        metadata = indexes.get_all_metadata(limit=50)
-        note_ids = [m["id"] for m in metadata]
+        metadata = indexes.get_all_metadata(limit=limit+offset+10)
+        note_ids = [m["id"] for m in metadata[offset:offset+limit]]
         notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+
+    # Check if there are more notes to load
+    has_more = len(notes_list) == limit
 
     return templates.TemplateResponse(
         "partials/note-list-only.html",
-        {"request": request, "notes": notes_list}
+        {"request": request, "notes": notes_list, "offset": offset + limit, "has_more": has_more}
     )
 
 
