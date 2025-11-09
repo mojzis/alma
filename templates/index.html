@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block body %}
+<header>
+    <h1>📝 Notes</h1>
+    <div class="user-info">
+        <span>{{ user }}</span>
+        <form method="post" action="/auth/logout" style="display: inline;">
+            <button type="submit" class="danger">Logout</button>
+        </form>
+    </div>
+</header>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+    <!-- Left column: Note creation form -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: fit-content;">
+        <h2>✍️ Add Note</h2>
+        {% include "partials/note-form.html" %}
+    </div>
+
+    <!-- Right column: Notes list -->
+    <div>
+        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2>📚 Recent Notes</h2>
+            <div id="notes-list" style="margin-top: 20px;">
+                {% if notes %}
+                    {% for note in notes %}
+                        {% include "partials/note-item.html" %}
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <p>No notes yet. Create your first note!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
