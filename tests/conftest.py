@@ -7,17 +7,21 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
+# Set environment variables BEFORE any imports
+# This ensures they're available when the app module loads
+os.environ["SECRET_KEY"] = "test-secret-key-for-testing-only"
+os.environ["GOOGLE_CLIENT_ID"] = "test-client-id"
+os.environ["GOOGLE_CLIENT_SECRET"] = "test-client-secret"
+os.environ["GOOGLE_REDIRECT_URI"] = "http://localhost:8000/auth/callback"
+os.environ["DEBUG"] = "True"
 
-@pytest.fixture
+
+@pytest.fixture(scope="session", autouse=True)
 def test_env():
-    """Set up test environment variables."""
-    os.environ["SECRET_KEY"] = "test-secret-key-for-testing-only"
-    os.environ["GOOGLE_CLIENT_ID"] = "test-client-id"
-    os.environ["GOOGLE_CLIENT_SECRET"] = "test-client-secret"
-    os.environ["GOOGLE_REDIRECT_URI"] = "http://localhost:8000/auth/callback"
-    os.environ["DEBUG"] = "True"
+    """Set up test environment variables at session level."""
+    # Already set at module level above
     yield
-    # Cleanup
+    # Cleanup after all tests
     for key in ["SECRET_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_REDIRECT_URI", "DEBUG"]:
         os.environ.pop(key, None)
 
@@ -48,7 +52,7 @@ def temp_notes_dir():
 
 
 @pytest.fixture
-def client(test_env, temp_notes_dir):
+def client(temp_notes_dir):
     """Create a test client for the FastAPI app."""
     from alma.main import app
 
