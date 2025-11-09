@@ -6,7 +6,7 @@ from typing import Annotated
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Response, Depends, Form, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -75,6 +75,74 @@ async def index(request: Request, user: str = Depends(require_auth)):
             "total_count": total_count
         }
     )
+
+
+# ============================================================================
+# TipTap Editor Endpoints
+# ============================================================================
+
+@app.get("/editor", response_class=HTMLResponse)
+async def editor_new(request: Request, user: str = Depends(require_auth)):
+    """Show editor for creating a new note."""
+    return templates.TemplateResponse("editor.html", {"request": request})
+
+
+@app.get("/editor/{note_id}", response_class=HTMLResponse)
+async def editor_edit(request: Request, note_id: str, user: str = Depends(require_auth)):
+    """Show editor for editing an existing note."""
+    note = notes.get_note(note_id)
+    if not note:
+        raise HTTPException(404, "Note not found")
+    return templates.TemplateResponse("editor.html", {"request": request, "note_id": note_id})
+
+
+@app.get("/editor/notes/{note_id}", response_class=HTMLResponse)
+async def get_note_content(note_id: str, user: str = Depends(require_auth)):
+    """Load a note's markdown content for the editor."""
+    note = notes.get_note(note_id)
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+
+    # Return just the markdown content (no frontmatter)
+    return HTMLResponse(content=note["content"])
+
+
+@app.post("/editor/notes/{note_id}")
+async def save_note_from_editor(
+    note_id: str,
+    content: Annotated[str, Form()],
+    user: str = Depends(require_auth)
+):
+    """Save markdown content from editor to existing note."""
+    note = notes.get_note(note_id)
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+
+    # Keep existing tags when saving from editor
+    tags = note.get("tags", [])
+
+    # Update the note
+    updated_note = notes.update_note(note_id, content, tags)
+
+    return {"success": True, "note_id": note_id}
+
+
+@app.post("/editor/notes")
+async def create_note_from_editor(
+    content: Annotated[str, Form()],
+    user: str = Depends(require_auth)
+):
+    """Create a new note from the editor."""
+    # Create note with default project and type
+    note = notes.create_note(
+        content=content,
+        project="default",
+        content_type="note",
+        tags=[],
+        user=user
+    )
+
+    return {"success": True, "note_id": note["id"]}
 
 
 @app.get("/login")
