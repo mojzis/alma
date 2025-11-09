@@ -5,6 +5,28 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
 
 # Virtual environments
 .venv
+
+# Environment
+.env
+
+# Application data
+.indexes/
+.intelligence/
+
+# Exports
+exports/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
