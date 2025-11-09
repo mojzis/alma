@@ -1,4 +1,4 @@
-<div class="note" id="note-{{ note.id }}">
+<div class="note" id="note-{{ note.id }}" data-note-id="{{ note.id }}">
     <div class="note-header">
         <div>
             <div class="note-title">{{ note.title }}</div>
@@ -8,11 +8,22 @@
         </div>
     </div>
 
-    <div class="note-content">{{ note.content }}</div>
+    <div class="note-content">{{ note.content_html | safe }}</div>
 
     {% if note.tags %}
     <div class="note-tags">
         Tags: {{ note.tags|join(', ') }}
+    </div>
+    {% endif %}
+
+    {% if note.backlinks %}
+    <div class="note-backlinks">
+        <strong>Backlinks:</strong>
+        {% for backlink_id in note.backlinks %}
+            <a href="#note-{{ backlink_id }}" onclick="scrollToNote('{{ backlink_id }}')" class="backlink">
+                {{ backlink_id[:8] }}...
+            </a>
+        {% endfor %}
     </div>
     {% endif %}
 

@@ -14,7 +14,7 @@ Usage:
 
 from pathlib import Path
 import frontmatter
-from . import indexes
+from . import indexes, wiki_links
 
 NOTES_DIR = Path("notes")
 
@@ -55,6 +55,10 @@ def regenerate_all_indexes():
             indexes.add_to_metadata_index(
                 note_id, title, created, modified, str(md_file), project, content_type, tags
             )
+
+            # Extract and index wiki-links
+            links = wiki_links.extract_wiki_links(post.content)
+            wiki_links.add_wiki_links_to_index(note_id, links)
 
             count += 1
 
