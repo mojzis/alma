@@ -1,50 +1,61 @@
 {% extends "base.html" %}
 
-{% block body %}
-<header>
-    <h1>📝 Notes</h1>
-    <div class="user-info">
-        <span>{{ user }}</span>
-        <form method="post" action="/auth/logout" style="display: inline;">
-            <button type="submit" class="danger">Logout</button>
-        </form>
-    </div>
-</header>
-
-<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
-    <!-- Left column: Note creation form -->
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: fit-content;">
-        <h2>✍️ Add Note</h2>
-        {% include "partials/note-form.html" %}
-    </div>
-
-    <!-- Right column: Notes list -->
-    <div>
-        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <h2>📚 Notes</h2>
-
-            <!-- Search -->
-            {% include "partials/search-bar.html" %}
-
-            <!-- Project Filter -->
-            {% include "partials/project-filter.html" %}
-
-            <!-- Tag Cloud -->
-            {% include "partials/tag-cloud.html" %}
-
-            <!-- Notes List -->
-            <div id="notes-list" style="margin-top: 20px;">
-                {% if notes %}
-                    {% for note in notes %}
-                        {% include "partials/note-item.html" %}
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state">
-                        <p>No notes yet. Create your first note!</p>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+{% block sidebar_left %}
+<!-- App Logo -->
+<div class="app-logo">
+    <h1>Notes</h1>
 </div>
+
+<!-- Projects List -->
+{% include "partials/projects-list.html" %}
+
+<!-- Divider -->
+<div class="divider"></div>
+
+<!-- Tags Cloud -->
+{% include "partials/tags-cloud.html" %}
+{% endblock %}
+
+{% block panel_center %}
+<!-- User Info Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl); padding-bottom: var(--spacing-lg); border-bottom: 1px solid var(--border-light);">
+    <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+        <!-- Mobile Menu Button -->
+        <button
+            @click="$store.ui.toggleLeftSidebar()"
+            class="secondary"
+            style="padding: 8px 12px; font-size: 14px; display: none;"
+            x-show="window.innerWidth < 1024"
+        >
+            ☰
+        </button>
+        <span class="text-sm">{{ user }}</span>
+    </div>
+    <form method="post" action="/auth/logout" style="display: inline;">
+        <button type="submit" class="danger" style="padding: 8px 16px; font-size: 13px;">Logout</button>
+    </form>
+</div>
+
+<!-- Note Creation Form -->
+{% include "partials/note-form.html" %}
+
+<!-- Notes List -->
+<div id="notes-list" style="margin-top: var(--spacing-lg);">
+    {% if notes %}
+        {% for note in notes %}
+            {% include "partials/note-item.html" %}
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <p>No notes yet. Create your first note!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar_right %}
+<h2>Context</h2>
+<p class="text-sm" style="margin-top: var(--spacing-md); color: var(--text-tertiary);">
+    Related notes will appear here as you type
+</p>
 {% endblock %}

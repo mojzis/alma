@@ -1,0 +1,35 @@
+<div class="section-header">Projects</div>
+<ul class="project-list">
+    <li class="project-item active"
+        hx-get="/notes"
+        hx-target="#notes-list"
+        hx-swap="innerHTML">
+        <div class="project-dot default"></div>
+        <span class="project-name">All Notes</span>
+        <span class="project-count">{{ total_count|default(0) }}</span>
+    </li>
+    <li class="project-item"
+        hx-get="/notes?project=work"
+        hx-target="#notes-list"
+        hx-swap="innerHTML">
+        <div class="project-dot work"></div>
+        <span class="project-name">Work</span>
+        <span class="project-count">{{ projects.get('work', 0) }}</span>
+    </li>
+    <li class="project-item"
+        hx-get="/notes?project=personal"
+        hx-target="#notes-list"
+        hx-swap="innerHTML">
+        <div class="project-dot personal"></div>
+        <span class="project-name">Personal</span>
+        <span class="project-count">{{ projects.get('personal', 0) }}</span>
+    </li>
+    <li class="project-item"
+        hx-get="/notes?project=reference"
+        hx-target="#notes-list"
+        hx-swap="innerHTML">
+        <div class="project-dot reference"></div>
+        <span class="project-name">Reference</span>
+        <span class="project-count">{{ projects.get('reference', 0) }}</span>
+    </li>
+</ul>

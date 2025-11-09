@@ -12,6 +12,60 @@
     <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
 
     <style>
+        /* ===== CSS Variables - Design System ===== */
+        :root {
+            /* Layout */
+            --sidebar-left-width: 240px;
+            --panel-center-width: 680px;
+            --sidebar-right-width: 420px;
+            --gap: 20px;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 24px;
+
+            /* Projects Colors */
+            --color-work: #3b82f6;
+            --color-personal: #8b5cf6;
+            --color-reference: #f59e0b;
+            --color-default: #6b7280;
+
+            /* States */
+            --color-focus: #10b981;
+            --color-unsaved: #ef4444;
+            --color-saved: #6b7280;
+
+            /* Backgrounds */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-hover: #f3f4f6;
+            --bg-active: #e5e7eb;
+            --bg-overlay: rgba(0, 0, 0, 0.5);
+
+            /* Text */
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-tertiary: #6b7280;
+            --text-placeholder: #9ca3af;
+
+            /* Borders */
+            --border-light: #e5e7eb;
+            --border-medium: #d1d5db;
+            --border-dark: #9ca3af;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            /* Transitions */
+            --transition-fast: 100ms ease;
+            --transition-normal: 200ms ease-in-out;
+            --transition-slow: 300ms ease;
+        }
+
+        /* ===== Reset & Base Styles ===== */
         * {
             margin: 0;
             padding: 0;
@@ -19,92 +73,255 @@
         }
 
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            max-width: 1200px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            overflow-x: hidden;
+        }
+
+        /* ===== Typography ===== */
+        h1, .text-lg {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        h2, .text-md {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .text-sm {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .text-xs {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== Layout Grid ===== */
+        .app-container {
+            display: grid;
+            grid-template-columns: var(--sidebar-left-width) 1fr;
+            gap: var(--gap);
+            min-height: 100vh;
+            max-width: 1440px;
             margin: 0 auto;
-            padding: 20px;
-            background: #f5f5f5;
-            color: #333;
+            padding: var(--gap);
         }
 
-        /* Header */
-        header {
-            background: white;
-            padding: 20px;
+        .app-container.with-right-sidebar {
+            grid-template-columns: var(--sidebar-left-width) 1fr var(--sidebar-right-width);
+        }
+
+        /* ===== Left Sidebar ===== */
+        .sidebar-left {
+            background: var(--bg-primary);
             border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-normal);
+            overflow-y: auto;
+            max-height: calc(100vh - 40px);
+        }
+
+        .sidebar-left.hidden {
+            transform: translateX(calc(-1 * var(--sidebar-left-width) - var(--gap)));
+        }
+
+        /* App Logo */
+        .app-logo {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Projects Section */
+        .section-header {
+            color: var(--text-placeholder);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .project-list {
+            list-style: none;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .project-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            margin-bottom: var(--spacing-xs);
         }
 
-        h1 {
-            font-size: 28px;
-            color: #333;
+        .project-item:hover {
+            background: var(--bg-hover);
         }
 
-        h2 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 20px;
+        .project-item.active {
+            background: var(--bg-active);
         }
 
-        .user-info {
+        .project-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .project-dot.work { background: var(--color-work); }
+        .project-dot.personal { background: var(--color-personal); }
+        .project-dot.reference { background: var(--color-reference); }
+        .project-dot.default { background: var(--color-default); }
+
+        .project-name {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .project-count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* Tags Section */
+        .tags-cloud {
             display: flex;
-            gap: 20px;
-            align-items: center;
-            color: #666;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
         }
 
-        /* Forms */
+        .tag-pill {
+            padding: 4px 10px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .tag-pill:hover {
+            background: var(--bg-active);
+            border-color: var(--border-medium);
+        }
+
+        .tag-pill.active {
+            background: var(--color-work);
+            color: white;
+            border-color: var(--color-work);
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: var(--spacing-xl) 0;
+        }
+
+        /* ===== Center Panel ===== */
+        .panel-center {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            overflow-y: auto;
+            max-height: calc(100vh - 40px);
+        }
+
+        /* ===== Right Sidebar ===== */
+        .sidebar-right {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-normal);
+            overflow-y: auto;
+            max-height: calc(100vh - 40px);
+        }
+
+        .sidebar-right.hidden {
+            display: none;
+        }
+
+        /* ===== Forms ===== */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: var(--spacing-lg);
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: var(--spacing-sm);
             font-weight: 600;
-            color: #555;
+            color: var(--text-secondary);
+            font-size: 13px;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 10px 12px;
+            border: 1px solid var(--border-medium);
             border-radius: 6px;
             font-size: 14px;
             font-family: inherit;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            transition: all var(--transition-fast);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--text-placeholder);
         }
 
         textarea {
             resize: vertical;
             min-height: 100px;
+            line-height: 1.6;
         }
 
         input:focus, textarea:focus, select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--color-work);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* Buttons */
+        /* ===== Buttons ===== */
         button {
             padding: 10px 20px;
-            background: #667eea;
+            background: var(--color-work);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            transition: all 0.2s;
+            transition: all var(--transition-fast);
         }
 
         button:hover:not(:disabled) {
-            background: #5568d3;
+            background: #2563eb;
             transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         button:disabled {
@@ -113,66 +330,79 @@
         }
 
         button.secondary {
-            background: #6c757d;
+            background: var(--text-tertiary);
         }
 
-        button.secondary:hover {
-            background: #5a6268;
+        button.secondary:hover:not(:disabled) {
+            background: var(--text-secondary);
         }
 
         button.danger {
-            background: #dc3545;
+            background: var(--color-unsaved);
         }
 
-        button.danger:hover {
-            background: #c82333;
+        button.danger:hover:not(:disabled) {
+            background: #dc2626;
         }
 
-        /* Notes */
+        /* ===== Notes ===== */
         .note {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 15px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .note:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .note.highlight {
+            animation: highlight-flash 2s;
+        }
+
+        @keyframes highlight-flash {
+            0% { background: #fffbea; border-color: #ffd93d; }
+            100% { background: var(--bg-primary); border-color: var(--border-light); }
         }
 
         .note-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
-            margin-bottom: 10px;
+            margin-bottom: var(--spacing-sm);
         }
 
         .note-title {
             font-weight: 600;
-            font-size: 16px;
-            color: #333;
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
         }
 
         .note-meta {
-            color: #999;
-            font-size: 13px;
-            margin-top: 4px;
+            color: var(--text-tertiary);
+            font-size: 12px;
         }
 
         .note-content {
-            margin: 12px 0;
+            margin: var(--spacing-md) 0;
             line-height: 1.6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .note-tags {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 10px;
+            color: var(--text-secondary);
         }
 
         .note-actions {
             display: flex;
-            gap: 8px;
+            gap: var(--spacing-sm);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .note:hover .note-actions {
+            opacity: 1;
         }
 
         .note-actions button {
@@ -186,7 +416,7 @@
             text-decoration: none;
             font-weight: 500;
             border-bottom: 1px dashed #667eea;
-            transition: all 0.2s;
+            transition: all var(--transition-fast);
         }
 
         .wiki-link:hover {
@@ -201,46 +431,37 @@
         }
 
         .note-backlinks {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #eee;
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-light);
             font-size: 13px;
-            color: #666;
+            color: var(--text-tertiary);
         }
 
         .note-backlinks strong {
             display: block;
             margin-bottom: 6px;
-            color: #555;
+            color: var(--text-secondary);
         }
 
         .backlink {
             display: inline-block;
             margin-right: 10px;
             padding: 4px 8px;
-            background: #f0f0f0;
+            background: var(--bg-hover);
             color: #667eea;
             text-decoration: none;
             border-radius: 4px;
             font-size: 12px;
-            transition: all 0.2s;
+            transition: all var(--transition-fast);
         }
 
         .backlink:hover {
-            background: #e0e0e0;
+            background: var(--bg-active);
             color: #5568d3;
         }
 
-        .note.highlight {
-            animation: highlight-flash 2s;
-        }
-
-        @keyframes highlight-flash {
-            0% { background: #fffbea; border-color: #ffd93d; }
-            100% { background: white; border-color: #ddd; }
-        }
-
-        /* HTMX Loading */
+        /* ===== HTMX Loading ===== */
         .htmx-indicator {
             display: none;
         }
@@ -253,7 +474,6 @@
             display: inline;
         }
 
-        /* Loading bar */
         .loading-bar {
             display: none;
             position: fixed;
@@ -261,7 +481,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, var(--color-work), var(--color-personal));
             z-index: 9999;
             animation: loading 1s infinite;
         }
@@ -275,11 +495,88 @@
             100% { transform: translateX(100%); }
         }
 
-        /* Utility */
+        /* ===== Utility Classes ===== */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #999;
+            color: var(--text-tertiary);
+        }
+
+        /* ===== Mobile Responsive ===== */
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .app-container.with-right-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-left {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: var(--sidebar-left-width);
+                z-index: 100;
+                border-radius: 0;
+                margin: 0;
+                max-height: 100vh;
+                transform: translateX(-100%);
+            }
+
+            .sidebar-left.visible {
+                transform: translateX(0);
+            }
+
+            .sidebar-right {
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: var(--sidebar-right-width);
+                z-index: 100;
+                border-radius: 0;
+                margin: 0;
+                max-height: 100vh;
+                transform: translateX(100%);
+            }
+
+            .sidebar-right.visible {
+                transform: translateX(0);
+                display: block;
+            }
+
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--bg-overlay);
+                z-index: 99;
+                display: none;
+            }
+
+            .overlay.visible {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: var(--spacing-md);
+                gap: var(--spacing-md);
+            }
+
+            .panel-center {
+                padding: var(--spacing-lg);
+            }
+
+            .sidebar-right {
+                width: 100%;
+                max-width: 400px;
+            }
         }
 
         {% block extra_styles %}{% endblock %}
@@ -288,7 +585,115 @@
 <body>
     <div class="loading-bar"></div>
 
-    {% block body %}{% endblock %}
+    <!-- Alpine.js Global Store -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('ui', {
+                leftSidebarOpen: window.innerWidth >= 1024,
+                rightSidebarOpen: false,
+                viewMode: 'focus', // 'focus' | 'browse'
+
+                init() {
+                    // Load from localStorage
+                    const saved = localStorage.getItem('ui-state');
+                    if (saved) {
+                        const state = JSON.parse(saved);
+                        this.leftSidebarOpen = state.leftSidebarOpen ?? this.leftSidebarOpen;
+                        this.rightSidebarOpen = state.rightSidebarOpen ?? false;
+                        this.viewMode = state.viewMode ?? 'focus';
+                    }
+
+                    // Watch for changes and save
+                    this.$watch('leftSidebarOpen', value => this.save());
+                    this.$watch('rightSidebarOpen', value => this.save());
+                    this.$watch('viewMode', value => this.save());
+
+                    // Handle responsive behavior
+                    window.addEventListener('resize', () => {
+                        if (window.innerWidth >= 1024) {
+                            this.leftSidebarOpen = true;
+                        }
+                    });
+                },
+
+                save() {
+                    localStorage.setItem('ui-state', JSON.stringify({
+                        leftSidebarOpen: this.leftSidebarOpen,
+                        rightSidebarOpen: this.rightSidebarOpen,
+                        viewMode: this.viewMode
+                    }));
+                },
+
+                toggleLeftSidebar() {
+                    this.leftSidebarOpen = !this.leftSidebarOpen;
+                },
+
+                toggleRightSidebar() {
+                    this.rightSidebarOpen = !this.rightSidebarOpen;
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Cmd/Ctrl + B: Toggle left sidebar
+            if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+                e.preventDefault();
+                Alpine.store('ui').toggleLeftSidebar();
+            }
+
+            // Cmd/Ctrl + /: Toggle right sidebar
+            if ((e.metaKey || e.ctrlKey) && e.key === '/') {
+                e.preventDefault();
+                Alpine.store('ui').toggleRightSidebar();
+            }
+        });
+    </script>
+
+    <!-- Main App Container -->
+    <div
+        class="app-container"
+        :class="{ 'with-right-sidebar': $store.ui.rightSidebarOpen }"
+        x-data
+    >
+        <!-- Mobile Overlay -->
+        <div
+            class="overlay"
+            :class="{ 'visible': ($store.ui.leftSidebarOpen || $store.ui.rightSidebarOpen) && window.innerWidth < 1024 }"
+            @click="$store.ui.leftSidebarOpen = false; $store.ui.rightSidebarOpen = false"
+            x-show="($store.ui.leftSidebarOpen || $store.ui.rightSidebarOpen) && window.innerWidth < 1024"
+        ></div>
+
+        <!-- Left Sidebar -->
+        <aside
+            class="sidebar-left"
+            :class="{ 'visible': $store.ui.leftSidebarOpen }"
+            x-show="$store.ui.leftSidebarOpen || window.innerWidth >= 1024"
+        >
+            {% block sidebar_left %}
+            <div class="app-logo">
+                <h1>Notes</h1>
+            </div>
+            {% endblock %}
+        </aside>
+
+        <!-- Center Panel -->
+        <main class="panel-center">
+            {% block panel_center %}{% endblock %}
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside
+            class="sidebar-right"
+            :class="{ 'visible': $store.ui.rightSidebarOpen }"
+            x-show="$store.ui.rightSidebarOpen"
+        >
+            {% block sidebar_right %}
+            <h2>Context</h2>
+            <p class="text-sm" style="margin-top: 12px;">Related notes will appear here</p>
+            {% endblock %}
+        </aside>
+    </div>
 
     <script>
         function scrollToNote(noteId) {

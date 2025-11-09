@@ -1,0 +1,15 @@
+<div class="section-header">Popular Tags</div>
+{% if tags %}
+<div class="tags-cloud">
+    {% for tag in tags[:12] %}
+    <div class="tag-pill"
+         hx-get="/notes?tag={{ tag }}"
+         hx-target="#notes-list"
+         hx-swap="innerHTML">
+        {{ tag }}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-sm" style="color: var(--text-tertiary);">No tags yet</p>
+{% endif %}

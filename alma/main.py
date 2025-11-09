@@ -57,9 +57,25 @@ async def index(request: Request, user: str = Depends(require_auth)):
     """Main app page - requires authentication."""
     notes_list = notes.list_notes(limit=20)
     all_tags = indexes.get_all_tags()
+
+    # Get project counts
+    projects_index = indexes.load_index(indexes.PROJECTS_INDEX)
+    project_counts = {
+        project: len(note_ids)
+        for project, note_ids in projects_index.items()
+    }
+    total_count = sum(project_counts.values())
+
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "user": user, "notes": notes_list, "tags": all_tags}
+        {
+            "request": request,
+            "user": user,
+            "notes": notes_list,
+            "tags": all_tags,
+            "projects": project_counts,
+            "total_count": total_count
+        }
     )
 
 

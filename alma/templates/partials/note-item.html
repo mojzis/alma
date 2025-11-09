@@ -1,21 +1,33 @@
 <div class="note" id="note-{{ note.id }}" data-note-id="{{ note.id }}">
     <div class="note-header">
-        <div>
+        <div style="flex: 1;">
             <div class="note-title">{{ note.title }}</div>
             <div class="note-meta">
-                {{ note.created[:10] }} | {{ note.project }} | {{ note.type }}
+                {{ note.created[:10] }} • {{ note.project }} • {{ note.type }}
             </div>
         </div>
     </div>
 
+    <!-- Note Content with Wiki-Link Rendering -->
     <div class="note-content">{{ note.content_html | safe }}</div>
 
+    <!-- Tags -->
     {% if note.tags %}
-    <div class="note-tags">
-        Tags: {{ note.tags|join(', ') }}
+    <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--spacing-md);">
+        {% for tag in note.tags %}
+        <span style="
+            padding: 3px 8px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        ">#{{ tag }}</span>
+        {% endfor %}
     </div>
     {% endif %}
 
+    <!-- Backlinks -->
     {% if note.backlinks %}
     <div class="note-backlinks">
         <strong>Backlinks:</strong>
@@ -27,12 +39,14 @@
     </div>
     {% endif %}
 
+    <!-- Actions (Hidden by Default, Show on Hover) -->
     <div class="note-actions">
         <button
             hx-get="/notes/{{ note.id }}/edit"
             hx-target="#note-{{ note.id }}"
             hx-swap="outerHTML"
             class="secondary"
+            onclick="event.stopPropagation()"
         >Edit</button>
         <button
             hx-delete="/notes/{{ note.id }}"
@@ -40,6 +54,7 @@
             hx-swap="outerHTML swap:300ms"
             hx-confirm="Delete this note?"
             class="danger"
+            onclick="event.stopPropagation()"
         >Delete</button>
     </div>
 </div>
