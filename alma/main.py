@@ -16,6 +16,7 @@ from .auth import (
     get_user_info,
     create_session_cookie,
     require_auth,
+    validate_config,
 )
 from . import notes
 
@@ -38,6 +39,17 @@ Path("notes/personal").mkdir(parents=True, exist_ok=True)
 Path("notes/work").mkdir(parents=True, exist_ok=True)
 Path("notes/reference").mkdir(parents=True, exist_ok=True)
 Path(".indexes").mkdir(exist_ok=True)
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Validate configuration on startup."""
+    try:
+        validate_config()
+        print("✓ Configuration validated successfully")
+    except ValueError as e:
+        print(f"\n❌ Configuration Error:\n{e}\n")
+        raise
 
 
 @app.get("/")

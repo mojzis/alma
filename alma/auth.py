@@ -23,6 +23,27 @@ GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
 SESSION_MAX_AGE = 604800  # 1 week in seconds
 
 
+def validate_config():
+    """Validate that all required environment variables are set."""
+    missing = []
+    if not GOOGLE_CLIENT_ID:
+        missing.append("GOOGLE_CLIENT_ID")
+    if not GOOGLE_CLIENT_SECRET:
+        missing.append("GOOGLE_CLIENT_SECRET")
+    if not GOOGLE_REDIRECT_URI:
+        missing.append("GOOGLE_REDIRECT_URI")
+    if not SECRET_KEY:
+        missing.append("SECRET_KEY")
+
+    if missing:
+        raise ValueError(
+            f"Missing required environment variables: {', '.join(missing)}\n"
+            f"Please copy .env.example to .env and configure your credentials."
+        )
+
+    return True
+
+
 def get_google_auth_url() -> str:
     """Generate Google OAuth authorization URL."""
     params = {

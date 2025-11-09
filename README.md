@@ -72,13 +72,57 @@ The app will be available at **http://localhost:8000**
 
 ## Google OAuth Setup
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or select existing)
-3. Enable **Google+ API**
-4. Go to **Credentials** > **Create Credentials** > **OAuth 2.0 Client ID**
-5. Application type: **Web application**
-6. Authorized redirect URIs: `http://localhost:8000/auth/callback`
-7. Copy the **Client ID** and **Client Secret** to your `.env` file
+### Step-by-Step Configuration
+
+1. **Go to [Google Cloud Console](https://console.cloud.google.com/)**
+
+2. **Create a new project** (or select existing)
+   - Click "Select a project" > "New Project"
+   - Give it a name like "Alma Notes"
+
+3. **Configure OAuth consent screen**
+   - Go to "APIs & Services" > "OAuth consent screen"
+   - Choose "External" (unless you have a Google Workspace account)
+   - Fill in app name: "Alma" (or your preferred name)
+   - Add your email as support email
+   - Click "Save and Continue"
+   - Skip scopes (click "Save and Continue")
+   - Add yourself as a test user
+   - Click "Save and Continue"
+
+4. **Create OAuth credentials**
+   - Go to "Credentials" > "Create Credentials" > "OAuth 2.0 Client ID"
+   - Application type: **Web application**
+   - Name: "Alma Web Client"
+   - **Authorized redirect URIs**: `http://localhost:8000/auth/callback`
+     - **IMPORTANT**: Must be exactly this URL
+     - No trailing slash
+     - Must match `GOOGLE_REDIRECT_URI` in your `.env`
+
+5. **Copy credentials to .env**
+   - Click "Download JSON" or copy the Client ID and Client Secret
+   - Update your `.env` file:
+     ```bash
+     GOOGLE_CLIENT_ID=your-actual-client-id-here.apps.googleusercontent.com
+     GOOGLE_CLIENT_SECRET=your-actual-client-secret-here
+     ```
+
+### Troubleshooting OAuth Errors
+
+**"400. That's an error. The server cannot process the request..."**
+- Check that your `.env` file exists and has the correct credentials
+- Verify `GOOGLE_REDIRECT_URI=http://localhost:8000/auth/callback` (no trailing slash)
+- Ensure the redirect URI in Google Cloud Console matches exactly
+- Run `uv run alma` and check for the "✓ Configuration validated" message
+
+**"redirect_uri_mismatch" error:**
+- The redirect URI in Google Cloud Console must exactly match the one in `.env`
+- Check for trailing slashes, http vs https, localhost vs 127.0.0.1
+
+**App still says "This app isn't verified":**
+- This is normal for apps in testing mode
+- Click "Advanced" > "Go to Alma (unsafe)" to proceed
+- Add yourself as a test user in the OAuth consent screen
 
 ## Project Structure
 
