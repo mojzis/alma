@@ -1,54 +1,105 @@
-<form
-    hx-post="/notes"
-    hx-target="#notes-list"
-    hx-swap="afterbegin"
-    hx-on::after-request="if(event.detail.successful) this.reset()"
-    x-data="{ content: '', valid: false }"
-    x-init="$watch('content', val => valid = val.trim().length > 0)"
+<div
+    x-data="{
+        content: '',
+        expanded: false,
+        wordCount: 0,
+        valid: false,
+        updateWordCount() {
+            this.wordCount = this.content.trim().split(/\s+/).filter(w => w.length > 0).length;
+            this.valid = this.content.trim().length > 0;
+        }
+    }"
 >
-    <div class="form-group">
-        <label for="project">Project</label>
-        <select name="project" id="project" required>
-            <option value="personal">Personal</option>
-            <option value="work">Work</option>
-            <option value="reference">Reference</option>
-        </select>
+    <!-- Form Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+        <h2 class="text-lg">New Note</h2>
+        <span class="text-sm" style="color: var(--text-tertiary);">⌘N</span>
     </div>
 
-    <div class="form-group">
-        <label for="content_type">Type</label>
-        <select name="content_type" id="content_type" required>
-            <option value="note">Note</option>
-            <option value="idea">Idea</option>
-            <option value="task">Task</option>
-            <option value="reference">Reference</option>
-        </select>
-    </div>
+    <form
+        hx-post="/notes"
+        hx-target="#notes-list"
+        hx-swap="afterbegin"
+        hx-on::after-request="if(event.detail.successful) { this.reset(); content = ''; expanded = false; wordCount = 0; }"
+    >
+        <!-- Metadata Row (Inline) -->
+        <div style="display: grid; grid-template-columns: 140px 120px 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+            <!-- Project Dropdown -->
+            <div>
+                <select name="project" required style="padding: 8px 12px; font-size: 13px;">
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="reference">Reference</option>
+                </select>
+            </div>
 
-    <div class="form-group">
-        <label for="tags">Tags (comma-separated)</label>
-        <input
-            type="text"
-            name="tags"
-            id="tags"
-            placeholder="python, fastapi, notes"
-        >
-    </div>
+            <!-- Type Dropdown -->
+            <div>
+                <select name="content_type" required style="padding: 8px 12px; font-size: 13px;">
+                    <option value="note">Note</option>
+                    <option value="idea">Idea</option>
+                    <option value="task">Task</option>
+                    <option value="reference">Reference</option>
+                </select>
+            </div>
 
-    <div class="form-group">
-        <label for="content">Content *</label>
-        <textarea
-            name="content"
-            id="content"
-            rows="6"
-            required
-            x-model="content"
-            placeholder="Write your note here..."
-        ></textarea>
-    </div>
+            <!-- Tags Input -->
+            <div>
+                <input
+                    type="text"
+                    name="tags"
+                    placeholder="Add tags..."
+                    style="padding: 8px 12px; font-size: 13px;"
+                >
+            </div>
+        </div>
 
-    <button type="submit" :disabled="!valid">
-        <span class="htmx-indicator">Saving...</span>
-        <span>Add Note</span>
-    </button>
-</form>
+        <!-- Content Textarea -->
+        <div class="form-group" style="margin-bottom: var(--spacing-md);">
+            <textarea
+                name="content"
+                required
+                x-model="content"
+                @input="updateWordCount(); expanded = content.length > 0"
+                placeholder="Start writing..."
+                :style="expanded ? 'height: 520px;' : 'height: 300px;'"
+                style="transition: height var(--transition-slow); font-size: 14px;"
+            ></textarea>
+            <div style="text-align: right; margin-top: var(--spacing-sm);">
+                <span class="text-sm" x-text="`${wordCount} words`"></span>
+            </div>
+        </div>
+
+        <!-- Formatting Hints -->
+        <div class="text-sm" style="color: var(--text-tertiary); margin-bottom: var(--spacing-md);">
+            Markdown supported: <code>**bold**</code> <code>*italic*</code> <code>[[wiki-link]]</code> <code>#tag</code>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: var(--spacing-md);">
+            <button
+                type="button"
+                class="secondary"
+                @click="content = ''; expanded = false; wordCount = 0;"
+                style="padding: 10px 20px;"
+            >
+                Cancel
+            </button>
+            <button
+                type="submit"
+                :disabled="!valid"
+                style="padding: 10px 24px;"
+            >
+                <span class="htmx-indicator">Saving...</span>
+                <span>Save Note</span>
+            </button>
+        </div>
+    </form>
+
+    <!-- Divider -->
+    <div style="margin: var(--spacing-xl) 0; padding-top: var(--spacing-xl); border-top: 1px solid var(--border-light);">
+        <p class="text-sm" style="color: var(--text-tertiary); text-align: center;">
+            ↓ Recent notes below (scroll or press Tab+S to switch view)
+        </p>
+    </div>
+</div>
