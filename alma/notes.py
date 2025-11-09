@@ -8,7 +8,7 @@ from typing import List
 import frontmatter
 from slugify import slugify
 
-from . import indexes
+from . import indexes, wiki_links
 
 NOTES_DIR = Path("notes")
 
@@ -65,6 +65,10 @@ def create_note(
         note_id, title, created, modified, str(file_path), project, content_type, tags
     )
 
+    # Extract and index wiki-links
+    links = wiki_links.extract_wiki_links(content)
+    wiki_links.add_wiki_links_to_index(note_id, links)
+
     # Return note dict
     return {
         "id": note_id,
@@ -89,10 +93,17 @@ def get_note(note_id: str) -> dict | None:
     post = frontmatter.load(file_path)
     metadata = post.metadata
 
+    title = metadata.get("title", "Untitled")
+    content = post.content
+
+    # Get backlinks for this note
+    backlinks = wiki_links.get_backlinks(title)
+
     return {
         "id": metadata.get("id"),
-        "title": metadata.get("title"),
-        "content": post.content,
+        "title": title,
+        "content": content,
+        "content_html": wiki_links.render_wiki_links(content),
         "created": metadata.get("created"),
         "modified": metadata.get("modified"),
         "project": metadata.get("project"),
@@ -100,6 +111,7 @@ def get_note(note_id: str) -> dict | None:
         "tags": metadata.get("tags", []),
         "user": metadata.get("user"),
         "file_path": str(file_path),
+        "backlinks": backlinks,
     }
 
 
@@ -183,6 +195,10 @@ def update_note(note_id: str, content: str, tags: List[str]) -> dict:
         indexes.update_tags_index(old_tags, tags, note_id)
     indexes.update_metadata_index(note_id, modified=modified, title=title, tags=tags)
 
+    # Update wiki-links index
+    links = wiki_links.extract_wiki_links(content)
+    wiki_links.add_wiki_links_to_index(note_id, links)
+
     # Return updated note
     return get_note(note_id)
 
@@ -200,6 +216,7 @@ def delete_note(note_id: str) -> bool:
     indexes.remove_from_project_index(note["project"], note_id)
     indexes.remove_from_tags_index(note.get("tags", []), note_id)
     indexes.remove_from_metadata_index(note_id)
+    wiki_links.remove_wiki_links_from_index(note_id)
 
     # Delete file
     file_path.unlink()
