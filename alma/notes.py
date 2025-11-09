@@ -8,6 +8,8 @@ from typing import List
 import frontmatter
 from slugify import slugify
 
+from . import indexes
+
 NOTES_DIR = Path("notes")
 
 
@@ -55,6 +57,13 @@ def create_note(
     # Write file
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(frontmatter.dumps(post))
+
+    # Update indexes synchronously
+    indexes.add_to_project_index(project, note_id)
+    indexes.add_to_tags_index(tags, note_id)
+    indexes.add_to_metadata_index(
+        note_id, title, created, modified, str(file_path), project, content_type, tags
+    )
 
     # Return note dict
     return {
@@ -149,20 +158,30 @@ def update_note(note_id: str, content: str, tags: List[str]) -> dict:
     # Load existing note
     post = frontmatter.load(file_path)
 
+    # Get old values for index updates
+    old_tags = post.metadata.get("tags", [])
+
     # Update content
     post.content = content
 
     # Update metadata
+    modified = datetime.now().isoformat()
     post["tags"] = tags
-    post["modified"] = datetime.now().isoformat()
+    post["modified"] = modified
 
     # Update title from first line
     lines = content.strip().split("\n")
-    post["title"] = lines[0][:100] if lines else post.get("title", "Untitled")
+    title = lines[0][:100] if lines else post.get("title", "Untitled")
+    post["title"] = title
 
     # Write updated file
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(frontmatter.dumps(post))
+
+    # Update indexes
+    if set(old_tags) != set(tags):
+        indexes.update_tags_index(old_tags, tags, note_id)
+    indexes.update_metadata_index(note_id, modified=modified, title=title, tags=tags)
 
     # Return updated note
     return get_note(note_id)
@@ -170,10 +189,19 @@ def update_note(note_id: str, content: str, tags: List[str]) -> dict:
 
 def delete_note(note_id: str) -> bool:
     """Delete a note file."""
-    file_path = _find_file_by_id(note_id)
-    if not file_path:
+    # Get note data before deleting
+    note = get_note(note_id)
+    if not note:
         return False
 
+    file_path = Path(note["file_path"])
+
+    # Remove from indexes
+    indexes.remove_from_project_index(note["project"], note_id)
+    indexes.remove_from_tags_index(note.get("tags", []), note_id)
+    indexes.remove_from_metadata_index(note_id)
+
+    # Delete file
     file_path.unlink()
     return True
 

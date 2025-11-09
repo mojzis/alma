@@ -1,0 +1,9 @@
+{% if notes %}
+    {% for note in notes %}
+        {% include "partials/note-item.html" %}
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <p>No notes found.</p>
+    </div>
+{% endif %}

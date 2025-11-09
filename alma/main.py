@@ -18,7 +18,7 @@ from .auth import (
     require_auth,
     validate_config,
 )
-from . import notes
+from . import notes, indexes
 
 # Load environment variables
 load_dotenv()
@@ -56,9 +56,10 @@ async def startup_event():
 async def index(request: Request, user: str = Depends(require_auth)):
     """Main app page - requires authentication."""
     notes_list = notes.list_notes(limit=20)
+    all_tags = indexes.get_all_tags()
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "user": user, "notes": notes_list}
+        {"request": request, "user": user, "notes": notes_list, "tags": all_tags}
     )
 
 
@@ -201,6 +202,87 @@ async def delete_note(
     """Delete note, return empty response."""
     notes.delete_note(note_id)
     return ""
+
+
+# ============================================================================
+# Filtering and Search Endpoints
+# ============================================================================
+
+@app.get("/notes")
+async def filter_notes(
+    request: Request,
+    project: str | None = None,
+    tag: str | None = None,
+    filter: str | None = None,
+    user: str = Depends(require_auth)
+):
+    """Filter notes by project or tag, return HTML fragment."""
+    notes_list = []
+
+    if filter == "all":
+        # Show all notes
+        metadata = indexes.get_all_metadata(limit=50)
+        note_ids = [m["id"] for m in metadata]
+        notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+    elif project:
+        # Filter by project
+        note_ids = indexes.get_notes_by_project(project)
+        notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+        # Sort by created date
+        notes_list.sort(key=lambda n: n.get("created", ""), reverse=True)
+    elif tag:
+        # Filter by tag
+        note_ids = indexes.get_notes_by_tag(tag)
+        notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+        # Sort by created date
+        notes_list.sort(key=lambda n: n.get("created", ""), reverse=True)
+    else:
+        # Default: show all
+        metadata = indexes.get_all_metadata(limit=50)
+        note_ids = [m["id"] for m in metadata]
+        notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+
+    return templates.TemplateResponse(
+        "partials/note-list-only.html",
+        {"request": request, "notes": notes_list}
+    )
+
+
+@app.get("/search")
+async def search_notes(
+    request: Request,
+    q: str = "",
+    user: str = Depends(require_auth)
+):
+    """Search notes by title, return HTML fragment."""
+    if not q or len(q.strip()) == 0:
+        # Empty search - show all notes
+        metadata = indexes.get_all_metadata(limit=50)
+        note_ids = [m["id"] for m in metadata]
+        notes_list = [notes.get_note(nid) for nid in note_ids if notes.get_note(nid)]
+    else:
+        # Search in metadata titles
+        query_lower = q.lower()
+        all_metadata = indexes.get_all_metadata(limit=500)
+        matching_ids = [
+            meta["id"]
+            for meta in all_metadata
+            if query_lower in meta.get("title", "").lower()
+        ]
+        notes_list = [notes.get_note(nid) for nid in matching_ids if notes.get_note(nid)]
+
+    return templates.TemplateResponse(
+        "partials/note-list-only.html",
+        {"request": request, "notes": notes_list}
+    )
+
+
+@app.post("/admin/regenerate")
+async def regenerate_indexes_endpoint(user: str = Depends(require_auth)):
+    """Manually trigger index regeneration."""
+    from .regenerate import regenerate_all_indexes
+    count = regenerate_all_indexes()
+    return {"status": "success", "notes_indexed": count}
 
 
 def main():
