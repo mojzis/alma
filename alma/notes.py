@@ -123,11 +123,8 @@ def list_notes(project: str | None = None, limit: int = 50) -> List[dict]:
     if project:
         search_dirs = [NOTES_DIR / project]
     else:
-        search_dirs = [
-            NOTES_DIR / "personal",
-            NOTES_DIR / "work",
-            NOTES_DIR / "reference",
-        ]
+        # Search all project directories
+        search_dirs = [d for d in NOTES_DIR.iterdir() if d.is_dir()]
 
     # Find all markdown files
     for search_dir in search_dirs:

@@ -1,0 +1,122 @@
+<div class="modal-overlay" x-data="{ color: '{{ project.color }}' }" @click.self="$el.remove()">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+            <h2>Edit Project</h2>
+            <button
+                type="button"
+                class="icon-button-small"
+                @click="$el.closest('.modal-overlay').remove()"
+                style="font-size: 20px; padding: 4px 8px;">
+                ×
+            </button>
+        </div>
+
+        <form
+            hx-put="/projects/{{ project.id }}"
+            hx-target="#projects-list-container"
+            hx-swap="innerHTML"
+            hx-on::after-request="if(event.detail.successful) { $el.closest('.modal-overlay').remove(); }">
+
+            <div class="form-group" style="margin-bottom: var(--spacing-lg);">
+                <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Project Name</label>
+                <input
+                    type="text"
+                    name="name"
+                    required
+                    value="{{ project.name }}"
+                    {% if project.is_default %}readonly{% endif %}
+                    style="width: 100%; padding: 10px 12px; font-size: 14px;" />
+                {% if project.is_default %}
+                <p class="text-sm" style="margin-top: var(--spacing-sm); color: var(--text-tertiary);">Default project name cannot be changed</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: var(--spacing-lg);">
+                <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Color</label>
+                <div class="color-picker" style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+                    <button
+                        type="button"
+                        @click="color='blue'"
+                        :class="{'selected': color==='blue'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #3b82f6; cursor: pointer;"
+                        :style="color === 'blue' ? 'border-color: #1e40af; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);' : ''"></button>
+                    <button
+                        type="button"
+                        @click="color='green'"
+                        :class="{'selected': color==='green'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #10b981; cursor: pointer;"
+                        :style="color === 'green' ? 'border-color: #047857; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);' : ''"></button>
+                    <button
+                        type="button"
+                        @click="color='purple'"
+                        :class="{'selected': color==='purple'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #8b5cf6; cursor: pointer;"
+                        :style="color === 'purple' ? 'border-color: #6d28d9; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);' : ''"></button>
+                    <button
+                        type="button"
+                        @click="color='orange'"
+                        :class="{'selected': color==='orange'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #f97316; cursor: pointer;"
+                        :style="color === 'orange' ? 'border-color: #c2410c; box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3);' : ''"></button>
+                    <button
+                        type="button"
+                        @click="color='red'"
+                        :class="{'selected': color==='red'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #ef4444; cursor: pointer;"
+                        :style="color === 'red' ? 'border-color: #b91c1c; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);' : ''"></button>
+                    <button
+                        type="button"
+                        @click="color='gray'"
+                        :class="{'selected': color==='gray'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #6b7280; cursor: pointer;"
+                        :style="color === 'gray' ? 'border-color: #374151; box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.3);' : ''"></button>
+                    <button
+                        type="button"
+                        @click="color='pink'"
+                        :class="{'selected': color==='pink'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #ec4899; cursor: pointer;"
+                        :style="color === 'pink' ? 'border-color: #be185d; box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.3);' : ''"></button>
+                    <button
+                        type="button"
+                        @click="color='yellow'"
+                        :class="{'selected': color==='yellow'}"
+                        class="color-option"
+                        style="width: 32px; height: 32px; border-radius: 6px; border: 2px solid transparent; background: #f59e0b; cursor: pointer;"
+                        :style="color === 'yellow' ? 'border-color: #b45309; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);' : ''"></button>
+                </div>
+                <input type="hidden" name="color" x-model="color" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: var(--spacing-xl);">
+                <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 500;">Description (Optional)</label>
+                <textarea
+                    name="description"
+                    placeholder="What this project is for..."
+                    style="width: 100%; padding: 10px 12px; font-size: 14px; min-height: 80px;"
+                    rows="3">{{ project.description }}</textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: var(--spacing-md);">
+                <button
+                    type="button"
+                    class="secondary"
+                    @click="$el.closest('.modal-overlay').remove()"
+                    style="padding: 10px 20px;">
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    style="padding: 10px 24px;">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
