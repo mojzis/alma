@@ -18,7 +18,7 @@ from .auth import (
     require_auth,
     validate_config,
 )
-from . import notes, indexes
+from . import notes, indexes, projects
 
 # Load environment variables
 load_dotenv()
@@ -35,10 +35,12 @@ templates_dir = Path(__file__).parent / "templates"
 templates = Jinja2Templates(directory=str(templates_dir))
 
 # Ensure required directories exist
-Path("notes/personal").mkdir(parents=True, exist_ok=True)
-Path("notes/work").mkdir(parents=True, exist_ok=True)
-Path("notes/reference").mkdir(parents=True, exist_ok=True)
+Path("notes").mkdir(parents=True, exist_ok=True)
 Path(".indexes").mkdir(exist_ok=True)
+
+# Initialize default project on first run
+default_project_dir = Path("notes/default")
+default_project_dir.mkdir(parents=True, exist_ok=True)
 
 
 @app.on_event("startup")
@@ -58,13 +60,9 @@ async def index(request: Request, user: str = Depends(require_auth)):
     notes_list = notes.list_notes(limit=20)
     all_tags = indexes.get_all_tags()
 
-    # Get project counts
-    projects_index = indexes.load_index(indexes.PROJECTS_INDEX)
-    project_counts = {
-        project: len(note_ids)
-        for project, note_ids in projects_index.items()
-    }
-    total_count = sum(project_counts.values())
+    # Get all projects with counts
+    projects_list = projects.get_all_projects()
+    total_count = sum(p.get("note_count", 0) for p in projects_list)
 
     return templates.TemplateResponse(
         "index.html",
@@ -73,7 +71,7 @@ async def index(request: Request, user: str = Depends(require_auth)):
             "user": user,
             "notes": notes_list,
             "tags": all_tags,
-            "projects": project_counts,
+            "projects_list": projects_list,
             "total_count": total_count
         }
     )
@@ -291,6 +289,93 @@ async def search_notes(
         "partials/note-list-only.html",
         {"request": request, "notes": notes_list}
     )
+
+
+# ============================================================================
+# Project Management Endpoints
+# ============================================================================
+
+@app.get("/projects/new")
+async def new_project_form(request: Request, user: str = Depends(require_auth)):
+    """Get project creation form modal."""
+    return templates.TemplateResponse(
+        "partials/project-create-modal.html",
+        {"request": request}
+    )
+
+
+@app.post("/projects")
+async def create_project(
+    request: Request,
+    name: Annotated[str, Form()],
+    color: Annotated[str, Form()] = "gray",
+    description: Annotated[str, Form()] = "",
+    user: str = Depends(require_auth)
+):
+    """Create new project, return updated projects list."""
+    try:
+        projects.create_project(name, color, description)
+        # Return updated projects list
+        projects_list = projects.get_all_projects()
+        all_notes_count = sum(p.get("note_count", 0) for p in projects_list)
+        return templates.TemplateResponse(
+            "partials/projects-list.html",
+            {"request": request, "projects_list": projects_list, "total_count": all_notes_count}
+        )
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.get("/projects/{project_id}/edit")
+async def edit_project_form(
+    request: Request,
+    project_id: str,
+    user: str = Depends(require_auth)
+):
+    """Get project edit form modal."""
+    project = projects.get_project(project_id)
+    if not project:
+        raise HTTPException(404, "Project not found")
+    return templates.TemplateResponse(
+        "partials/project-edit-modal.html",
+        {"request": request, "project": project}
+    )
+
+
+@app.put("/projects/{project_id}")
+async def update_project(
+    request: Request,
+    project_id: str,
+    name: Annotated[str, Form()],
+    color: Annotated[str, Form()] = None,
+    description: Annotated[str, Form()] = None,
+    user: str = Depends(require_auth)
+):
+    """Update project, return updated projects list."""
+    try:
+        projects.update_project(project_id, name, color, description)
+        # Return updated projects list
+        projects_list = projects.get_all_projects()
+        all_notes_count = sum(p.get("note_count", 0) for p in projects_list)
+        return templates.TemplateResponse(
+            "partials/projects-list.html",
+            {"request": request, "projects_list": projects_list, "total_count": all_notes_count}
+        )
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.delete("/projects/{project_id}")
+async def delete_project(
+    project_id: str,
+    user: str = Depends(require_auth)
+):
+    """Delete project (only if empty), return success."""
+    try:
+        projects.delete_project(project_id)
+        return ""
+    except ValueError as e:
+        raise HTTPException(400, str(e))
 
 
 @app.post("/admin/regenerate")

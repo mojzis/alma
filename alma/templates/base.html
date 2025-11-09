@@ -191,6 +191,14 @@
         .project-dot.personal { background: var(--color-personal); }
         .project-dot.reference { background: var(--color-reference); }
         .project-dot.default { background: var(--color-default); }
+        .project-dot.blue { background: #3b82f6; }
+        .project-dot.green { background: #10b981; }
+        .project-dot.purple { background: #8b5cf6; }
+        .project-dot.orange { background: #f97316; }
+        .project-dot.red { background: #ef4444; }
+        .project-dot.gray { background: #6b7280; }
+        .project-dot.pink { background: #ec4899; }
+        .project-dot.yellow { background: #f59e0b; }
 
         .project-name {
             flex: 1;
@@ -201,6 +209,43 @@
         .project-count {
             font-size: 12px;
             color: var(--text-tertiary);
+        }
+
+        .project-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-left: auto;
+        }
+
+        .icon-button, .icon-button-small {
+            background: transparent;
+            color: var(--text-tertiary);
+            border: 1px solid var(--border-medium);
+            padding: 6px 10px;
+            font-size: 14px;
+            min-width: auto;
+        }
+
+        .icon-button:hover, .icon-button-small:hover {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .icon-button-small {
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        .icon-button-small.danger:hover {
+            background: var(--color-unsaved);
+            color: white;
+            border-color: var(--color-unsaved);
+        }
+
+        [x-cloak] {
+            display: none !important;
         }
 
         /* Tags Section */
@@ -493,6 +538,32 @@
         @keyframes loading {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
+        }
+
+        /* ===== Modals ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--spacing-xl);
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         /* ===== Utility Classes ===== */

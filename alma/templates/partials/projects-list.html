@@ -1,35 +1,69 @@
-<div class="section-header">Projects</div>
-<ul class="project-list">
+<div id="projects-list-container">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+        <span>Projects</span>
+        <button
+            class="icon-button"
+            title="Add Project"
+            hx-get="/projects/new"
+            hx-target="#modal-container"
+            hx-swap="innerHTML"
+            style="padding: 4px 8px; font-size: 16px; line-height: 1;">
+            +
+        </button>
+    </div>
+
+    <ul class="project-list">
+    <!-- All Notes (Special Item) -->
     <li class="project-item active"
-        hx-get="/notes"
+        hx-get="/notes?filter=all"
         hx-target="#notes-list"
         hx-swap="innerHTML">
         <div class="project-dot default"></div>
         <span class="project-name">All Notes</span>
         <span class="project-count">{{ total_count|default(0) }}</span>
     </li>
+
+    <!-- Dynamic Projects -->
+    {% for project in projects_list %}
     <li class="project-item"
-        hx-get="/notes?project=work"
+        hx-get="/notes?project={{ project.id }}"
         hx-target="#notes-list"
-        hx-swap="innerHTML">
-        <div class="project-dot work"></div>
-        <span class="project-name">Work</span>
-        <span class="project-count">{{ projects.get('work', 0) }}</span>
+        hx-swap="innerHTML"
+        x-data="{ showActions: false }"
+        @mouseenter="showActions = true"
+        @mouseleave="showActions = false">
+        <div class="project-dot {{ project.color }}"></div>
+        <span class="project-name">{{ project.name }}</span>
+        <span class="project-count">{{ project.note_count|default(0) }}</span>
+
+        <!-- Edit/Delete Buttons (on hover) -->
+        <div class="project-actions" x-show="showActions" x-cloak>
+            <button
+                class="icon-button-small"
+                title="Edit project"
+                hx-get="/projects/{{ project.id }}/edit"
+                hx-target="#modal-container"
+                hx-swap="innerHTML"
+                @click.stop>
+                ✎
+            </button>
+            {% if not project.is_default %}
+            <button
+                class="icon-button-small danger"
+                title="Delete project"
+                hx-delete="/projects/{{ project.id }}"
+                hx-confirm="Delete '{{ project.name }}'? This will only work if the project is empty."
+                hx-target="closest li"
+                hx-swap="outerHTML swap:0.5s"
+                @click.stop>
+                ×
+            </button>
+            {% endif %}
+        </div>
     </li>
-    <li class="project-item"
-        hx-get="/notes?project=personal"
-        hx-target="#notes-list"
-        hx-swap="innerHTML">
-        <div class="project-dot personal"></div>
-        <span class="project-name">Personal</span>
-        <span class="project-count">{{ projects.get('personal', 0) }}</span>
-    </li>
-    <li class="project-item"
-        hx-get="/notes?project=reference"
-        hx-target="#notes-list"
-        hx-swap="innerHTML">
-        <div class="project-dot reference"></div>
-        <span class="project-name">Reference</span>
-        <span class="project-count">{{ projects.get('reference', 0) }}</span>
-    </li>
-</ul>
+    {% endfor %}
+    </ul>
+</div>
+
+<!-- Modal Container -->
+<div id="modal-container"></div>
