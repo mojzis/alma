@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900">
+  <defs>
+    <style>
+      .bg { fill: #f9fafb; }
+      .panel { fill: white; stroke: #e5e7eb; stroke-width: 1; }
+      .panel-dark { fill: #f3f4f6; stroke: #d1d5db; stroke-width: 1; }
+      .text { font-family: -apple-system, system-ui, sans-serif; font-size: 13px; fill: #374151; }
+      .text-sm { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; fill: #6b7280; }
+      .text-lg { font-family: -apple-system, system-ui, sans-serif; font-size: 15px; fill: #111827; font-weight: 600; }
+      .accent { fill: #3b82f6; }
+      .accent-light { fill: #dbeafe; }
+      .button { fill: #3b82f6; stroke: none; rx: 4; }
+      .button-text { fill: white; font-family: -apple-system, system-ui, sans-serif; font-size: 12px; font-weight: 500; }
+      .input { fill: white; stroke: #d1d5db; stroke-width: 1; rx: 4; }
+      .tag { fill: #f3f4f6; stroke: #d1d5db; stroke-width: 1; rx: 12; }
+      .tag-text { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; fill: #4b5563; }
+      .project-item { fill: transparent; stroke: none; }
+      .project-item:hover { fill: #f3f4f6; }
+      .divider { stroke: #e5e7eb; stroke-width: 1; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect class="bg" width="1400" height="900"/>
+  
+  <!-- LEFT SIDEBAR - Projects & Tags -->
+  <rect class="panel-dark" x="0" y="0" width="240" height="900"/>
+  
+  <!-- App title/logo -->
+  <text class="text-lg" x="20" y="30">Notes</text>
+  
+  <!-- Projects section -->
+  <text class="text-sm" x="20" y="70" style="text-transform: uppercase; letter-spacing: 0.5px; fill: #9ca3af;">Projects</text>
+  
+  <!-- Project list -->
+  <g transform="translate(20, 90)">
+    <rect class="project-item" width="200" height="32" rx="4"/>
+    <circle cx="8" cy="16" r="4" class="accent"/>
+    <text class="text" x="24" y="20">All Notes</text>
+    <text class="text-sm" x="180" y="20" text-anchor="end">142</text>
+  </g>
+  
+  <g transform="translate(20, 126)">
+    <rect class="project-item" width="200" height="32" rx="4"/>
+    <circle cx="8" cy="16" r="4" fill="#10b981"/>
+    <text class="text" x="24" y="20">Work</text>
+    <text class="text-sm" x="180" y="20" text-anchor="end">48</text>
+  </g>
+  
+  <g transform="translate(20, 162)">
+    <rect class="project-item" width="200" height="32" rx="4"/>
+    <circle cx="8" cy="16" r="4" fill="#8b5cf6"/>
+    <text class="text" x="24" y="20">Personal</text>
+    <text class="text-sm" x="180" y="20" text-anchor="end">67</text>
+  </g>
+  
+  <g transform="translate(20, 198)">
+    <rect class="project-item" width="200" height="32" rx="4"/>
+    <circle cx="8" cy="16" r="4" fill="#f59e0b"/>
+    <text class="text" x="24" y="20">Reference</text>
+    <text class="text-sm" x="180" y="20" text-anchor="end">27</text>
+  </g>
+  
+  <!-- Divider -->
+  <line class="divider" x1="20" y1="250" x2="220" y2="250"/>
+  
+  <!-- Tags section (bottom of sidebar) -->
+  <text class="text-sm" x="20" y="780" style="text-transform: uppercase; letter-spacing: 0.5px; fill: #9ca3af;">Popular Tags</text>
+  
+  <g transform="translate(20, 795)">
+    <rect class="tag" width="52" height="22"/>
+    <text class="tag-text" x="10" y="15">python</text>
+  </g>
+  <g transform="translate(78, 795)">
+    <rect class="tag" width="60" height="22"/>
+    <text class="tag-text" x="10" y="15">meeting</text>
+  </g>
+  <g transform="translate(144, 795)">
+    <rect class="tag" width="42" height="22"/>
+    <text class="tag-text" x="10" y="15">idea</text>
+  </g>
+  
+  <g transform="translate(20, 823)">
+    <rect class="tag" width="48" height="22"/>
+    <text class="tag-text" x="10" y="15">design</text>
+  </g>
+  <g transform="translate(74, 823)">
+    <rect class="tag" width="38" height="22"/>
+    <text class="tag-text" x="10" y="15">api</text>
+  </g>
+  <g transform="translate(118, 823)">
+    <rect class="tag" width="58" height="22"/>
+    <text class="tag-text" x="10" y="15">research</text>
+  </g>
+  
+  <!-- MAIN CONTENT AREA - Focus Mode (Default) -->
+  <rect class="panel" x="260" y="20" width="680" height="860" rx="8"/>
+  
+  <!-- Note creation form header -->
+  <g transform="translate(280, 40)">
+    <text class="text-lg" x="0" y="0">New Note</text>
+    <text class="text-sm" x="520" y="0" text-anchor="end">⌘N</text>
+  </g>
+  
+  <!-- Form metadata row -->
+  <g transform="translate(280, 70)">
+    <!-- Project dropdown -->
+    <rect class="input" x="0" y="0" width="140" height="36"/>
+    <text class="text" x="12" y="23">Work</text>
+    <text class="text-sm" x="120" y="23">â–¼</text>
+    
+    <!-- Type dropdown -->
+    <rect class="input" x="152" y="0" width="120" height="36"/>
+    <text class="text" x="164" y="23">Note</text>
+    <text class="text-sm" x="260" y="23">â–¼</text>
+    
+    <!-- Tags input -->
+    <rect class="input" x="284" y="0" width="356" height="36"/>
+    <text class="text-sm" x="296" y="23" style="fill: #9ca3af;">Add tags...</text>
+  </g>
+  
+  <!-- Main content textarea -->
+  <rect class="input" x="280" y="120" width="640" height="520"/>
+  <text class="text" x="296" y="145" style="fill: #9ca3af;">Start writing...</text>
+  
+  <!-- Character count -->
+  <text class="text-sm" x="900" y="658" text-anchor="end">0 words</text>
+  
+  <!-- Action buttons -->
+  <rect class="button" x="720" y="670" width="100" height="36"/>
+  <text class="button-text" x="770" y="693" text-anchor="middle">Save Note</text>
+  
+  <rect class="input" x="832" y="670" width="88" height="36"/>
+  <text class="text" x="876" y="693" text-anchor="middle">Cancel</text>
+  
+  <!-- Formatting hints -->
+  <g transform="translate(280, 730)">
+    <text class="text-sm" x="0" y="0" style="fill: #9ca3af;">Markdown supported: **bold** *italic* [[wiki-link]] #tag</text>
+  </g>
+  
+  <!-- Quick actions bar -->
+  <g transform="translate(280, 770)">
+    <circle cx="8" cy="8" r="8" class="accent-light"/>
+    <text class="text-sm" x="24" y="12">[[Link to note</text>
+    
+    <circle cx="148" cy="8" r="8" class="accent-light"/>
+    <text class="text-sm" x="164" y="12">Attach file</text>
+    
+    <circle cx="268" cy="8" r="8" class="accent-light"/>
+    <text class="text-sm" x="284" y="12">AI classify</text>
+  </g>
+  
+  <!-- Recent notes hint -->
+  <g transform="translate(280, 820)">
+    <line class="divider" x1="0" y1="0" x2="640" y2="0"/>
+    <text class="text-sm" x="0" y="24" style="fill: #9ca3af;">↓ Recent notes below (scroll or press Tab+S to switch view)</text>
+  </g>
+  
+  <!-- RIGHT SIDEBAR - Context & Actions -->
+  <rect class="panel" x="960" y="20" width="420" height="860" rx="8"/>
+  
+  <!-- Context header -->
+  <g transform="translate(980, 40)">
+    <text class="text-lg" x="0" y="0">Context</text>
+    <text class="text-sm" x="300" y="0">Related notes will appear here</text>
+  </g>
+  
+  <!-- Placeholder content -->
+  <g transform="translate(980, 80)">
+    <rect class="panel-dark" width="380" height="80" rx="6"/>
+    <circle cx="20" cy="40" r="12" fill="#e5e7eb"/>
+    <rect class="panel-dark" x="44" y="20" width="200" height="8" rx="4" fill="#e5e7eb"/>
+    <rect class="panel-dark" x="44" y="36" width="280" height="6" rx="3" fill="#f3f4f6"/>
+    <rect class="panel-dark" x="44" y="48" width="240" height="6" rx="3" fill="#f3f4f6"/>
+  </g>
+  
+  <g transform="translate(980, 170)">
+    <rect class="panel-dark" width="380" height="80" rx="6"/>
+    <circle cx="20" cy="40" r="12" fill="#e5e7eb"/>
+    <rect class="panel-dark" x="44" y="20" width="180" height="8" rx="4" fill="#e5e7eb"/>
+    <rect class="panel-dark" x="44" y="36" width="260" height="6" rx="3" fill="#f3f4f6"/>
+    <rect class="panel-dark" x="44" y="48" width="220" height="6" rx="3" fill="#f3f4f6"/>
+  </g>
+  
+  <!-- Divider -->
+  <line class="divider" x1="980" y1="280" x2="1360" y2="280"/>
+  
+  <!-- AI Suggestions -->
+  <g transform="translate(980, 300)">
+    <text class="text-sm" x="0" y="0" style="text-transform: uppercase; letter-spacing: 0.5px; fill: #9ca3af;">Suggested Tags</text>
+    
+    <g transform="translate(0, 15)">
+      <rect class="tag" width="52" height="22"/>
+      <text class="tag-text" x="10" y="15">api +</text>
+    </g>
+    <g transform="translate(60, 15)">
+      <rect class="tag" width="68" height="22"/>
+      <text class="tag-text" x="10" y="15">backend +</text>
+    </g>
+  </g>
+  
+  <!-- Annotations -->
+  <g transform="translate(50, 400)">
+    <line x1="0" y1="0" x2="-30" y2="-80" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4"/>
+    <rect x="-180" y="-140" width="140" height="52" rx="4" fill="#3b82f6" opacity="0.95"/>
+    <text x="-170" y="-115" style="fill: white; font-size: 11px; font-weight: 600;">Collapsible sidebar</text>
+    <text x="-170" y="-102" style="fill: white; font-size: 10px;">⌘B to toggle</text>
+  </g>
+  
+  <g transform="translate(570, 300)">
+    <line x1="0" y1="0" x2="60" y2="-60" stroke="#10b981" stroke-width="2" stroke-dasharray="4"/>
+    <rect x="70" y="-120" width="160" height="52" rx="4" fill="#10b981" opacity="0.95"/>
+    <text x="80" y="-95" style="fill: white; font-size: 11px; font-weight: 600;">Focus is default view</text>
+    <text x="80" y="-82" style="fill: white; font-size: 10px;">Clean, distraction-free</text>
+  </g>
+  
+  <g transform="translate(1170, 100)">
+    <line x1="0" y1="0" x2="120" y2="0" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4"/>
+    <rect x="130" y="-30" width="180" height="52" rx="4" fill="#8b5cf6" opacity="0.95"/>
+    <text x="140" y="-5" style="fill: white; font-size: 11px; font-weight: 600;">Smart context sidebar</text>
+    <text x="140" y="8" style="fill: white; font-size: 10px;">Wiki-links, AI suggestions</text>
+  </g>
+  
+  <g transform="translate(120, 810)">
+    <line x1="0" y1="0" x2="-20" y2="40" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4"/>
+    <rect x="-180" y="50" width="150" height="40" rx="4" fill="#f59e0b" opacity="0.95"/>
+    <text x="-170" y="72" style="fill: white; font-size: 11px; font-weight: 600;">Tag cloud at bottom</text>
+    <text x="-170" y="84" style="fill: white; font-size: 10px;">Quick filtering</text>
+  </g>
+</svg>
