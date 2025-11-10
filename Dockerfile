@@ -14,14 +14,13 @@ RUN apt-get update && \
 RUN pip install --no-cache-dir uv
 
 # Copy dependency files
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock README.md ./
 
 # Install Python dependencies using UV
 RUN uv sync --frozen --no-dev
 
 # Copy application code
 COPY alma ./alma
-COPY README.md ./
 
 # Create directories for data persistence
 RUN mkdir -p /app/notes /app/.indexes
