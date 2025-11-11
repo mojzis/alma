@@ -44,11 +44,11 @@ def validate_config():
     return True
 
 
-def get_google_auth_url() -> str:
+def get_google_auth_url(redirect_uri: str | None = None) -> str:
     """Generate Google OAuth authorization URL."""
     params = {
         "client_id": GOOGLE_CLIENT_ID,
-        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "redirect_uri": redirect_uri or GOOGLE_REDIRECT_URI,
         "response_type": "code",
         "scope": "openid email profile",
         "access_type": "offline",
@@ -57,7 +57,7 @@ def get_google_auth_url() -> str:
     return f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
 
 
-async def exchange_code_for_token(code: str) -> dict:
+async def exchange_code_for_token(code: str, redirect_uri: str | None = None) -> dict:
     """Exchange authorization code for access token."""
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -66,7 +66,7 @@ async def exchange_code_for_token(code: str) -> dict:
                 "code": code,
                 "client_id": GOOGLE_CLIENT_ID,
                 "client_secret": GOOGLE_CLIENT_SECRET,
-                "redirect_uri": GOOGLE_REDIRECT_URI,
+                "redirect_uri": redirect_uri or GOOGLE_REDIRECT_URI,
                 "grant_type": "authorization_code",
             },
         )
