@@ -155,21 +155,31 @@ async def login_page(request: Request):
 
 
 @app.get("/auth/google")
-async def auth_google():
+async def auth_google(request: Request):
     """Redirect to Google OAuth consent screen."""
-    auth_url = get_google_auth_url()
+    # Construct redirect URI dynamically based on the request's host
+    scheme = "https" if request.headers.get("x-forwarded-proto") == "https" or request.url.scheme == "https" else "http"
+    host = request.headers.get("host") or request.url.netloc
+    redirect_uri = f"{scheme}://{host}/auth/callback"
+
+    auth_url = get_google_auth_url(redirect_uri)
     return RedirectResponse(auth_url)
 
 
 @app.get("/auth/callback")
-async def auth_callback(code: str, response: Response):
+async def auth_callback(request: Request, code: str, response: Response):
     """
     Handle Google OAuth callback.
     Exchange code for token, get user info, create session.
     """
     try:
+        # Construct redirect URI dynamically (must match the one used in /auth/google)
+        scheme = "https" if request.headers.get("x-forwarded-proto") == "https" or request.url.scheme == "https" else "http"
+        host = request.headers.get("host") or request.url.netloc
+        redirect_uri = f"{scheme}://{host}/auth/callback"
+
         # Exchange authorization code for access token
-        token_data = await exchange_code_for_token(code)
+        token_data = await exchange_code_for_token(code, redirect_uri)
         access_token = token_data["access_token"]
 
         # Get user information
