@@ -167,7 +167,10 @@ def remove_from_metadata_index(note_id: str):
 def get_note_metadata(note_id: str) -> dict | None:
     """Get metadata for a note."""
     index = load_index(METADATA_INDEX)
-    return index.get(note_id)
+    metadata = index.get(note_id)
+    if metadata:
+        return {"id": note_id, **metadata}
+    return None
 
 
 def get_all_metadata(limit: int = 100, offset: int = 0) -> List[dict]:

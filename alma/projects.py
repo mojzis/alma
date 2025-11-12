@@ -135,8 +135,21 @@ def update_project(project_id: str, name: str = None, color: str = None, descrip
 
 def delete_project(project_id: str) -> bool:
     """Delete a project (must be empty and not default)."""
+    # Load projects config first
+    projects = load_projects_config()
+
+    # Check if project exists
+    project = None
+    for p in projects:
+        if p.get("id") == project_id:
+            project = p
+            break
+
+    if not project:
+        raise ValueError(f"Project '{project_id}' not found")
+
     # Cannot delete default project
-    if project_id == "default":
+    if project_id == "default" or project.get("is_default"):
         raise ValueError("Cannot delete default project")
 
     # Check if project has notes
@@ -145,8 +158,7 @@ def delete_project(project_id: str) -> bool:
     if note_ids:
         raise ValueError(f"Cannot delete project with {len(note_ids)} notes. Move notes first.")
 
-    # Load and remove from config
-    projects = load_projects_config()
+    # Remove from config
     projects = [p for p in projects if p.get("id") != project_id]
     save_projects_config(projects)
 
