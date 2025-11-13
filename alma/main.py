@@ -210,7 +210,7 @@ async def auth_callback(request: Request, code: str, response: Response):
 @app.post("/auth/logout")
 async def logout(response: Response):
     """Destroy session and redirect to login."""
-    response = RedirectResponse("/login")
+    response = RedirectResponse("/login", status_code=302)
     response.delete_cookie("session")
     return response
 

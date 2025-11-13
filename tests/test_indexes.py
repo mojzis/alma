@@ -61,7 +61,7 @@ def test_metadata_index(temp_notes_dir):
     project = "personal"
 
     # Add to index
-    indexes.add_to_metadata_index(note_id, title, created, modified, file_path, project)
+    indexes.add_to_metadata_index(note_id, title, created, modified, file_path, project, "note", [])
 
     # Retrieve from index
     metadata = indexes.get_note_metadata(note_id)
