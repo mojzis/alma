@@ -389,6 +389,11 @@
             background: var(--text-secondary);
         }
 
+        /* Color picker buttons - prevent default button background override */
+        button.color-option {
+            background: none;
+        }
+
         button.danger {
             background: var(--color-unsaved);
         }
